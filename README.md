@@ -16,7 +16,7 @@
 >学习和调整实际上是反向传播的过程，通过梯度下降法调整权重和偏置。那么有利于使用梯度下降法改善权重和偏置的状态就是一个比较好的状态。如何有利于使用梯度下降法？梯度大的地方收敛就快。这就需要看具体的激活函数特性
 为了使得网络中信息更好的流动，每一层输出分布应当尽量与输入一致，方差应该尽量相等
 在初始化的时候使各层神经元的方差保持不变, 即使各层有着相同的分布.  很多初始化策略都是为了保持每层的分布不变。
-![ff](md_pic\v2-f088788a94fd5f425fb3ef1acd3d5a8d_r.jpg)
+![ff](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic\v2-f088788a94fd5f425fb3ef1acd3d5a8d_r.jpg)
 
 # 权重初始化方法
 >附图为输入0均值，1标准差，10层网络，经过初始态，一次正向传播后各层输出分布。具体代码见[GITHUB](https://github.com/gdyshi/bp_weight_init.git)
@@ -26,17 +26,17 @@
 
 ## 随机化
 - 小随机数
-![sigmod](md_pic\v2-83469109cd362f5fcf1decf109007fbd_r.jpg)
-![tanh](md_pic\v2-a39596b282f6333bced6e7bfbfe04dcd_r.jpg)
+![sigmod](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic\v2-83469109cd362f5fcf1decf109007fbd_r.jpg)
+![tanh](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic\v2-a39596b282f6333bced6e7bfbfe04dcd_r.jpg)
 >只适用于小型网络。
 >权重初始值要非常接近0又不能等于0。解决方法就是将权重初始化为很小的数值，以此来打破对称性。其思路是：如果神经元刚开始的时候是随机且不相等的，那么它们将计算出不同的更新，并将自身变成整个网络的不同部分。小随机数权重初始化的实现方法是：W = 0.01 * np.random.randn(D,H)来生成随机数的。根据这个式子，每个神经元的权重向量都被初始化为一个随机向量，而这些随机向量又服从一个多变量高斯分布，这样在输入空间中，所有的神经元的指向是随机的。
 >如果每层都用N(0, 0.01)随机初始化的话, 各层的数据分布不一致, 随着层度的增加, 神经元将集中在很大的值或很小的值, 不利于传递信息.
 - Xavier
-![1](md_pic\20160507180252629.png)
-![2](md_pic\20160507180808647.png)
-![3](md_pic\20160507181258399.png)
-![4](md_pic\20160507181653603.png)
-![5](md_pic\20160507181828965.png)
+![1](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic\20160507180252629.png)
+![2](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic\20160507180808647.png)
+![3](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic\20160507181258399.png)
+![4](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic\20160507181653603.png)
+![5](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic\20160507181828965.png)
 >最为常用的神经网络权重初始化方法
 >神经网络分布的方差随着输入数量的增大而增大,可以通过正则化方差来提高权重收敛速率.不合适的权重初始化会使得隐藏层的输入的方差过大,从而在经过sigmoid这种非线性层时离中心较远(导数接近0),因此过早地出现梯度消失
 - HE/MSRA
