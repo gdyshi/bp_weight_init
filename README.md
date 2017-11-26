@@ -33,6 +33,7 @@
 >如果每层都用N(0, 0.01)随机初始化的话, 各层的数据分布不一致, 随着层度的增加, 神经元将集中在很大的值或很小的值, 不利于传递信息.
 
 - Xavier
+>
 ![1](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507180252629.png)
 ![2](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507180808647.png)
 ![3](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507181258399.png)
