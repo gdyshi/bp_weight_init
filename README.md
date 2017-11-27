@@ -58,8 +58,8 @@
 >具体代码见[GITHUB](https://github.com/gdyshi/bp_weight_init.git)
 - 训练框架：TensorFlow
 - 数据集：MNIST手写识别
-- 神经网络类型：3隐藏层
-- 针对全零初始化、随机初始化和Xavier进行训练次数和准确率对比
+- 神经网络类型：4隐藏层
+- 针对全零初始化、小随机数初始化和Xavier进行训练次数和准确率对比
 
 # 结论
 ReLU He initialization

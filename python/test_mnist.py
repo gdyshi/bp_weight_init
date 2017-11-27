@@ -2,52 +2,90 @@ import argparse
 import sys
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
+import numpy as np
 
 FLAGS = None
+INIT_METHORD_ZERO = "zero"  # 固定值（0值）
+INIT_METHORD_RANDOM = "random"  # 随机数
+INIT_METHORD_LITTLE_RANDOM = "little_random"  # 小随机数
+INIT_METHORD_XAVIER = "Xavier"  # Xavier
+INIT_METHORD_HE = "he"  # HE/MSRA
+
+ACTIVATION_FUNCTION_TANH = "tanh"
+ACTIVATION_FUNCTION_SIGMOID = "sigmoid"
+ACTIVATION_FUNCTION_RELU = "relu"
+
+# layers = [784, 577, 384, 256, 171, 114, 76, 51, 34, 23, 15, 10] # batch norm
+# layers = [784, 320, 160, 80, 40, 20, 10]
+layers = [784, 390, 156, 62, 25, 10]
+# layers = [784, 270, 90, 30, 10]
+# layers = [784, 90, 10]
+
+# 初始化方法选择
+INIT_METHORD = INIT_METHORD_LITTLE_RANDOM
+
+# 批量归一化
+BATCH_NORM = False
+
+# 激活函数选择
+ACTIVATION_FUNCTION = ACTIVATION_FUNCTION_SIGMOID
+
+
 def main(_):
     # Import data
     mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
-
+    print(layers)
     # Create the model
     x = tf.placeholder(tf.float32, [None, 784])
-    # W_1 = tf.Variable(tf.random_normal([784, 30]) / tf.sqrt(784.0))
-    W_1 = tf.Variable(tf.random_normal([784, 30])*0.01)
-    b_1 = tf.Variable(tf.random_normal([30]))
-    z_1 = tf.matmul(x, W_1) + b_1
-    y_1 = tf.sigmoid(z_1)
+    for i in range(0, len(layers) - 1):
+        X = x if i == 0 else y
+        node_in = layers[i]
+        node_out = layers[i + 1]
+        if INIT_METHORD == INIT_METHORD_ZERO:
+            W = tf.Variable(tf.zeros([node_in, node_out]))
+        elif INIT_METHORD == INIT_METHORD_RANDOM:
+            W = tf.Variable(np.random.randn(node_in, node_out).astype('float32'))
+        elif INIT_METHORD == INIT_METHORD_LITTLE_RANDOM:
+            W = tf.Variable(np.random.randn(node_in, node_out).astype('float32') * 0.01)
+        elif INIT_METHORD == INIT_METHORD_XAVIER:
+            W = tf.Variable(np.random.randn(node_in, node_out).astype('float32') / (np.sqrt(node_in)))
+        elif INIT_METHORD == INIT_METHORD_HE:
+            W = tf.Variable(np.random.randn(node_in, node_out).astype('float32') / (np.sqrt(node_in / 2)))
+        b = tf.Variable(np.random.randn(node_out).astype('float32'))
+        z = tf.matmul(X, W) + b
 
-    # W_3 = tf.Variable(tf.random_normal([30, 10]) / tf.sqrt(30.0))
-    W_2 = tf.Variable(tf.random_normal([30, 10])*0.01)
-    b_2 = tf.Variable(tf.random_normal([10]))
-    z_2 = tf.matmul(y_1, W_2) + b_2
-    y_2 = tf.sigmoid(z_2)
+        if BATCH_NORM:
+            z = tf.contrib.layers.batch_norm(z, center=True, scale=True,
+                                              is_training=True)
+
+        if ACTIVATION_FUNCTION == ACTIVATION_FUNCTION_TANH:
+            y = tf.nn.tanh(z)
+        elif ACTIVATION_FUNCTION == ACTIVATION_FUNCTION_SIGMOID:
+            y = tf.nn.sigmoid(z)
+        elif ACTIVATION_FUNCTION == ACTIVATION_FUNCTION_RELU:
+            y = tf.nn.relu(z)
 
     # Define loss and optimizer
     y_ = tf.placeholder(tf.float32, [None, 10])
-
-    loss = tf.reduce_mean(tf.norm(y_ - y_2, axis=1)**2) / 2
+    print(y)
+    loss = tf.reduce_mean(tf.norm(y_ - y, axis=1) ** 2) / 2
     # loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=y_, logits=z_3))
+    # train_step = tf.train.GradientDescentOptimizer(0.01).minimize(loss) #relu 0.01 tanh 0.1
     train_step = tf.train.GradientDescentOptimizer(3.0).minimize(loss)
 
-    sess = tf.InteractiveSession()
-    tf.global_variables_initializer().run()
+    correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+    accuracy = tf.reduce_sum(tf.cast(correct_prediction, tf.int32))
 
-    # Train
-    best = 0
-    for epoch in range(30):
-        for _ in range(5000):
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for i in range(20000):
             batch_xs, batch_ys = mnist.train.next_batch(10)
-            sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
-        # Test trained model
-        correct_prediction = tf.equal(tf.argmax(y_2, 1), tf.argmax(y_, 1))
-        accuracy = tf.reduce_sum(tf.cast(correct_prediction, tf.int32))
-        accuracy_currut = sess.run(accuracy, feed_dict={x: mnist.test.images,
-                                                        y_: mnist.test.labels})
-        print("Epoch %s: %s / 10000" % (epoch, accuracy_currut))
-        best = (best, accuracy_currut)[best <= accuracy_currut]
+            if i % 1000 == 0:
+                train_accuracy = accuracy.eval(feed_dict={x: mnist.test.images,
+                                                          y_: mnist.test.labels})
+                print('step %d, training accuracy %g' % (i, train_accuracy))
+            train_step.run(feed_dict={x: batch_xs, y_: batch_ys})
 
-    # Test trained model
-    print("best: %s / 10000" % best)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
