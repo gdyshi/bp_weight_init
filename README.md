@@ -103,24 +103,26 @@
 - 数据集：MNIST手写识别
 - 神经网络类型：4隐藏层，sigmoid激活
 - 针对全零初始化、小随机数初始化、Xavier初始化和批量归一化进行训练次数和准确率对比
+
 | 序号  | 初始化方法                      | 达到80%的训练次数              | 最终精确度|
 | :------------- | :------------- | :------------- | :-------------  |
 | 1 |全零初始化                 | 无法达到      | 11%  |
 | 2 |小随机数初始化           | 无法达到      | 11%  |
 | 3 |Xavier初始化  | 6000      | 95%  |
 | 4 |小随机数初始化+批量归一化  | 1000    | 95%  |
+
 > 全零初始化
 
-![全零初始化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training1.bmp)
+![全零初始化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training1.png)
 > 小随机数初始化
 
-![小随机数初始化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training2.bmp)
+![小随机数初始化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training2.png)
 > Xavier初始化
 
-![Xavier初始化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training3.bmp)
+![Xavier初始化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training3.png)
 > 小随机数初始化+批量归一化
 
-![小随机数初始化+批量归一化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training4.bmp)
+![小随机数初始化+批量归一化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training4.png)
 # 结论
 - 优先使用Xavier初始化方法
 - ReLU激活函数优先使用HE/MSRA初始化方法
