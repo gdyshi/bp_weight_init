@@ -1,5 +1,9 @@
+# Copyright 2017 gdyshi. All Rights Reserved.
+# github: https://github.com/gdyshi
+# ==============================================================================
 # 本文件源自：
 # https://github.com/feixia586/zhihu_material/blob/master/weight_initialization/w_init.py
+
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt

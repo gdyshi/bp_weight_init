@@ -16,6 +16,7 @@
 >学习和调整实际上是反向传播的过程，通过梯度下降法调整权重和偏置。那么有利于使用梯度下降法改善权重和偏置的状态就是一个比较好的状态。如何有利于使用梯度下降法？梯度大的地方收敛就快。这就需要看具体的激活函数特性
 为了使得网络中信息更好的流动，每一层输出分布应当尽量与输入一致，方差应该尽量相等
 在初始化的时候使各层神经元的方差保持不变, 即使各层有着相同的分布.  很多初始化策略都是为了保持每层的分布不变。
+
 ![ff](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/v2-f088788a94fd5f425fb3ef1acd3d5a8d_r.jpg)
 
 # 权重初始化方法
@@ -23,26 +24,60 @@
 
 ## 固定值（0值）
 >极不建议。因为如果网络中的每个神经元都计算出同样的输出，然后它们就会在反向传播中计算出同样的梯度，从而进行同样的参数更新。换句话说，如果权重被初始化为同样的值，神经元之间就失去了不对称性的源头
+>经过10层网络后各层的输出分布
+
+![0值](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/Figure_1.png)
 
 ## 随机化
+>经过10层网络后各层的输出分布
+
+![随机数](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/Figure_2.png)
 - 小随机数
+> 根据激活函数的特性，选择小随机数
+
 ![sigmod](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/v2-83469109cd362f5fcf1decf109007fbd_r.jpg)
 ![tanh](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/v2-a39596b282f6333bced6e7bfbfe04dcd_r.jpg)
 >只适用于小型网络。
 >权重初始值要非常接近0又不能等于0。解决方法就是将权重初始化为很小的数值，以此来打破对称性。其思路是：如果神经元刚开始的时候是随机且不相等的，那么它们将计算出不同的更新，并将自身变成整个网络的不同部分。小随机数权重初始化的实现方法是：W = 0.01 * np.random.randn(D,H)来生成随机数的。根据这个式子，每个神经元的权重向量都被初始化为一个随机向量，而这些随机向量又服从一个多变量高斯分布，这样在输入空间中，所有的神经元的指向是随机的。
 >如果每层都用N(0, 0.01)随机初始化的话, 各层的数据分布不一致, 随着层度的增加, 神经元将集中在很大的值或很小的值, 不利于传递信息.
 
+>经过10层网络后各层的输出分布
+
+![小随机数](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/Figure_3.png)
 - Xavier
->
-![1](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507180252629.png)
-![2](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507180808647.png)
-![3](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507181258399.png)
-![4](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507181653603.png)
-![5](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507181828965.png)
 >最为常用的神经网络权重初始化方法
 >神经网络分布的方差随着输入数量的增大而增大,可以通过正则化方差来提高权重收敛速率.不合适的权重初始化会使得隐藏层的输入的方差过大,从而在经过sigmoid这种非线性层时离中心较远(导数接近0),因此过早地出现梯度消失
+> 前向传播推导
+![1](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507180252629.png)
+
+![2](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507180808647.png)
+
+![3](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507181258399.png)
+
+![4](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507181653603.png)
+
+![5](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507181828965.png)
+> 反向传播推导
+
+![6](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507182201262.png)
+> 最终分布条件
+
+![7](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507182402488.png)
+
+![8](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507182552982.png)
+> 本次仅使用前向传播类进行类比
+>经过10层网络后各层的输出分布
+
+![Xavier](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/Figure_4.png)
 - HE/MSRA
 >Xavier推导的时候假设激活函数是线性的。HE/MSRA是沿用Xavier的思想，针对relu类型的激活函数做的进一步优化
+>Xavier初始化经过10层网络RELU激活后各层的输出分布
+
+![HE/MSRA](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/Figure_5.png)
+>HE/MSRA初始化经过10层网络RELU激活后各层的输出分布
+
+![HE/MSRA](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/Figure_6.png)
+
 - 稀疏初始化
 >将所有权重矩阵设为0，但是为了打破对称性，每个神经元都同下一层固定数目的神经元随机连接（其权重数值由一个小的高斯分布生成）。一个比较典型的连接数目是10个。
 
@@ -52,18 +87,44 @@
 - 迁移学习
 >用当前已训练好的比较稳定的神经网络。这一块研究文章较多，后面作为专题研究
 # 另辟蹊径-跳过权重问题————批量归一化
->这一块后面作为专题研究
+>在每次前向传播过程中，都将输入数据进行归一化整理，使得输入数据满足某种分布规律
+>公式
+
+![批量归一化公式](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/v2-2b14851823a6ec035cc16147eb5e04b0_hd.jpg)
+
+>随机初始化经过10层网络批量归一化后各层的输出分布
+
+![批量归一化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/Figure_7.png)
+
 
 # 实例
 >具体代码见[GITHUB](https://github.com/gdyshi/bp_weight_init.git)
 - 训练框架：TensorFlow
 - 数据集：MNIST手写识别
-- 神经网络类型：4隐藏层
-- 针对全零初始化、小随机数初始化和Xavier进行训练次数和准确率对比
+- 神经网络类型：4隐藏层，sigmoid激活
+- 针对全零初始化、小随机数初始化、Xavier初始化和批量归一化进行训练次数和准确率对比
+| 序号  | 初始化方法                      | 达到80%的训练次数              | 最终精确度|
+| :------------- | :------------- | :------------- | :-------------  |
+| 1 |全零初始化                 | 无法达到      | 11%  |
+| 2 |小随机数初始化           | 无法达到      | 11%  |
+| 3 |Xavier初始化  | 6000      | 95%  |
+| 4 |小随机数初始化+批量归一化  | 1000    | 95%  |
+> 全零初始化
 
+![全零初始化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training1.bmp)
+> 小随机数初始化
+
+![小随机数初始化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training2.bmp)
+> Xavier初始化
+
+![Xavier初始化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training3.bmp)
+> 小随机数初始化+批量归一化
+
+![小随机数初始化+批量归一化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training4.bmp)
 # 结论
-ReLU He initialization
-批量归一化
+- 优先使用Xavier初始化方法
+- ReLU激活函数优先使用HE/MSRA初始化方法
+- 可以尝试批量归一化
 
 
 ---

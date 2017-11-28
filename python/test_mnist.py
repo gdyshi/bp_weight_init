@@ -1,4 +1,8 @@
 import argparse
+# Copyright 2017 gdyshi. All Rights Reserved.
+# github: https://github.com/gdyshi
+# ==============================================================================
+
 import sys
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
@@ -25,7 +29,7 @@ layers = [784, 390, 156, 62, 25, 10]
 INIT_METHORD = INIT_METHORD_LITTLE_RANDOM
 
 # 批量归一化
-BATCH_NORM = False
+BATCH_NORM = True
 
 # 激活函数选择
 ACTIVATION_FUNCTION = ACTIVATION_FUNCTION_SIGMOID
