@@ -50,6 +50,7 @@
 >最为常用的神经网络权重初始化方法
 >神经网络分布的方差随着输入数量的增大而增大,可以通过正则化方差来提高权重收敛速率.不合适的权重初始化会使得隐藏层的输入的方差过大,从而在经过sigmoid这种非线性层时离中心较远(导数接近0),因此过早地出现梯度消失
 > 前向传播推导
+
 ![1](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507180252629.png)
 
 ![2](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/20160507180808647.png)
