@@ -1,5 +1,5 @@
 # 摘要
->神经网络/深度学习模型训练的过程本质是对权重进行更新，在对一个新的模型进行训练之前，需要每个参数有相应的初始值。对于多层神经网络/深度学习而言，如何选择参数初始值便成为一个值得探讨的问题。
+>神经网络/深度学习模型训练的过程本质是对权重进行更新，在对一个新的模型进行训练之前，需要每个参数有相应的初始值。对于多层神经网络/深度学习而言，如何选择参数初始值便成为一个值得探讨的问题。本文从实现激活值的稳定分布角度来探讨神经网络的效率优化问题
 
 ---
 
@@ -8,7 +8,7 @@
 
 >按照上述推导，在多层神经网络中，因为存在各层级联的情况，前一层的输出会成为下一层的输入。所以为了使各层神经网络真正的发挥作用，就要求各层（非输出层）的输出符合数据本身的分布特性，而不能过于集中。不然下一级的神经网络就失去了意义，甚至会起反作用
 
->为了使各层（非输出层）的输出符合某种分布，不过于集中。f(wx+b)中的每一项都需要研究和优化。包括激活函数f、权重w和偏置b。本次主要讨论权重w初始值对神经网络的影响
+>为了使各层（非输出层）的输出符合某种分布，而不过于集中。f(wx+b)中的每一项都需要研究和优化。包括激活函数f、权重w和偏置b。本文主要讨论权重w初始值对神经网络的影响
 
 >神经网络一个理想的初始状态应该是各层输出值比较分散，而且能反映输入数据本身的分布特性。这样在反向传播时，各权重值的变化方向和大小也能呈现出离散性，有利于网络的快速收敛
 
@@ -18,6 +18,8 @@
 在初始化的时候使各层神经元的方差保持不变, 即使各层有着相同的分布.  很多初始化策略都是为了保持每层的分布不变。
 
 ![ff](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/v2-f088788a94fd5f425fb3ef1acd3d5a8d_r.jpg)
+## 梯度爆炸与梯度消失
+> 针对多次神经网络，在神经网络的反向传播过程中，根据链式法则，如果每一层神经元对上一层的输出的偏导乘上权重结果都小于1的话，那么即使这个结果是0.99，在经过足够多层传播之后，误差对输入层的偏导会趋于0。都大于1的话，梯度会随着反向传播层数的增加而呈指数增长，导致梯度爆炸。
 
 # 权重初始化方法
 >附图为输入0均值，1标准差，10层网络，经过初始态，一次正向传播后各层输出分布。具体代码见[GITHUB](https://github.com/gdyshi/bp_weight_init.git)
@@ -84,8 +86,9 @@
 ## fine-turning
 - [pre-training](http://ufldl.stanford.edu/wiki/index.php/Stacked_Autoencoders)
 >首先使用一个方法（贪婪算法、无监督学习。。。）针对每一层的权重进行优化，用于提取有效的特征值，然后用优化好的权重进行训练
-- 迁移学习
+- Transfer Learning
 >用当前已训练好的比较稳定的神经网络。这一块研究文章较多，后面作为专题研究
+
 # 另辟蹊径-跳过权重问题————批量归一化
 >在每次前向传播过程中，都将输入数据进行归一化整理，使得输入数据满足某种分布规律
 >公式
@@ -123,18 +126,19 @@
 > 小随机数初始化+批量归一化
 
 ![小随机数初始化+批量归一化](https://raw.githubusercontent.com/gdyshi/bp_weight_init/master/md_pic/training4.png)
+
 # 结论
+- 优先使用批量归一化
 - 优先使用Xavier初始化方法
 - ReLU激活函数优先使用HE/MSRA初始化方法
-- 可以尝试批量归一化
-
 
 ---
 参考资料
 - [聊一聊深度学习的weight initialization](https://zhuanlan.zhihu.com/p/25110150)
 - [Stacked Autoencoders](http://ufldl.stanford.edu/wiki/index.php/Stacked_Autoencoders)
-- [CS231n neural-networks-2](http://cs231n.github.io/neural-networks-2/#init) [对应翻译笔记](https://zhuanlan.zhihu.com/p/21560667?refer=intelligentunit)
+- [CS231n neural-networks-2](http://cs231n.github.io/neural-networks-2) [对应翻译笔记](https://zhuanlan.zhihu.com/p/21560667?refer=intelligentunit)
 - [深度学习——Xavier初始化方法](http://blog.csdn.net/shuzfan/article/details/51338178)
 - [深度学习——MSRA初始化](http://blog.csdn.net/shuzfan/article/details/51347572)
 - [TensorFlow从0到1 | 第十五章 重新思考神经网络初始化](https://zhuanlan.zhihu.com/p/29268873)
 - [神经网络中激活函数稀疏激活性的重要性](http://blog.csdn.net/xianchengfeng/article/details/74177940)
+- [译文 | 批量归一化：通过减少内部协变量转移加速深度网络训练](https://ask.julyedu.com/question/7706)

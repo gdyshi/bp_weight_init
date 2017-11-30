@@ -32,7 +32,7 @@ INIT_METHORD = INIT_METHORD_LITTLE_RANDOM
 BATCH_NORM = True
 
 # 激活函数选择
-ACTIVATION_FUNCTION = ACTIVATION_FUNCTION_SIGMOID
+ACTIVATION_FUNCTION = ACTIVATION_FUNCTION_TANH
 
 
 def main(_):
@@ -43,6 +43,12 @@ def main(_):
     x = tf.placeholder(tf.float32, [None, 784])
     for i in range(0, len(layers) - 1):
         X = x if i == 0 else y
+
+        # 放这里有神奇的现象
+        # if BATCH_NORM:
+        #     X = tf.contrib.layers.batch_norm(X, center=True, scale=True,
+        #                                       is_training=True)
+
         node_in = layers[i]
         node_out = layers[i + 1]
         if INIT_METHORD == INIT_METHORD_ZERO:
@@ -75,7 +81,7 @@ def main(_):
     loss = tf.reduce_mean(tf.norm(y_ - y, axis=1) ** 2) / 2
     # loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=y_, logits=z_3))
     # train_step = tf.train.GradientDescentOptimizer(0.01).minimize(loss) #relu 0.01 tanh 0.1
-    train_step = tf.train.GradientDescentOptimizer(3.0).minimize(loss)
+    train_step = tf.train.GradientDescentOptimizer(3.0/16).minimize(loss)#relu 16 tanh 16
 
     correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_sum(tf.cast(correct_prediction, tf.int32))
