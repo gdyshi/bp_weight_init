@@ -26,10 +26,10 @@ layers = [784, 390, 156, 62, 25, 10]
 # layers = [784, 90, 10]
 
 # 初始化方法选择
-INIT_METHORD = INIT_METHORD_LITTLE_RANDOM
+INIT_METHORD = INIT_METHORD_XAVIER
 
 # 批量归一化
-BATCH_NORM = True
+BATCH_NORM = False
 
 # 激活函数选择
 ACTIVATION_FUNCTION = ACTIVATION_FUNCTION_TANH
@@ -66,7 +66,7 @@ def main(_):
 
         if BATCH_NORM:
             z = tf.contrib.layers.batch_norm(z, center=True, scale=True,
-                                              is_training=True)
+                                             is_training=True)
 
         if ACTIVATION_FUNCTION == ACTIVATION_FUNCTION_TANH:
             y = tf.nn.tanh(z)
@@ -79,9 +79,8 @@ def main(_):
     y_ = tf.placeholder(tf.float32, [None, 10])
     print(y)
     loss = tf.reduce_mean(tf.norm(y_ - y, axis=1) ** 2) / 2
-    # loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=y_, logits=z_3))
-    # train_step = tf.train.GradientDescentOptimizer(0.01).minimize(loss) #relu 0.01 tanh 0.1
-    train_step = tf.train.GradientDescentOptimizer(3.0/16).minimize(loss)#relu 16 tanh 16
+    train_step = tf.train.GradientDescentOptimizer(3.0).minimize(loss)
+    # train_step = tf.train.GradientDescentOptimizer(3.0 / 256).minimize(loss)  # relu 16 tanh 16
 
     correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_sum(tf.cast(correct_prediction, tf.int32))
